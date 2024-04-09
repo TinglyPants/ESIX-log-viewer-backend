@@ -1,5 +1,8 @@
 const express = require("express");
 const router = express.Router();
+require("dotenv").config();
+const logFolderPath = process.env.LOGS_PATH;
+const fs = require("fs");
 
 const dateRegex = new RegExp("\\d{1,2}[-]\\d{1,2}[-]\\d{4}");
 
@@ -16,8 +19,10 @@ router.get("/:date", (req, res) => {
         res.status(400).send("Please enter a valid date.");
         return;
     }
-
-    res.send("Nice!");
+    fs.readFile(logFolderPath + "\\" + date + ".txt", "utf8", (err, data) => {
+        if (err) throw err;
+        res.send(data);
+    });
 });
 
 module.exports = router;
