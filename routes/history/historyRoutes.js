@@ -24,7 +24,7 @@ router.get("/:date", (req, res) => {
         path.join(logFolderPath, date + ".txt"),
         "utf8",
         (err, data) => {
-            if (err) throw err;
+            if (err) res.status(404).send("Nothing found for that one.");
             res.send(data);
         }
     );
