@@ -14,7 +14,7 @@ function processLogFiles() {
 }
 
 async function processFile(filename) {
-    const fileStream = fs.createReadStream(logFolderPath + "\\" + filename);
+    const fileStream = fs.createReadStream(path.join(logFolderPath, filename));
 
     const rl = readline.createInterface({
         input: fileStream,
