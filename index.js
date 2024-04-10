@@ -4,7 +4,9 @@ const historyRoutes = require("./routes/history/historyRoutes");
 const userRoutes = require("./routes/user/userRoutes");
 const functionRoutes = require("./routes/function/functionRoutes");
 const processLogs = require("./processLogs");
+const cors = require("cors");
 
+app.use(cors());
 app.use("/history", historyRoutes);
 app.use("/users", userRoutes);
 app.use("/functions", functionRoutes);
