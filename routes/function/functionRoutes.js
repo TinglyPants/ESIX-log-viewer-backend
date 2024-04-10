@@ -1,36 +1,38 @@
 const express = require("express");
 const router = express.Router();
 const fs = require("fs");
-const readline = require("readline");
 const path = require("path");
 
 const dateRegex = new RegExp("\\d{1,2}[-]\\d{1,2}[-]\\d{4}");
 
-//Gets all the JSON data for a given user.
-router.get("/user/:username", (req, res) => {
+//Gets total usage for a given command, showing who used it the most too. e.g: {tingly: 2593, nick: 667}
+router.get("/function/:name", (req, res) => {
     // iterate over all logs and get the user
-    let usernameCommandInfo = [];
+    let functionInfo = [];
     fs.readdir(
         path.join(__dirname, "../../", "processedLogs"),
         (err, files) => {
             for (file of files) {
-                // Make sure it doesnt access the globalData
+                // Dont access the globalData
                 if (file === "globalData.json") {
                     continue;
                 }
-
                 const data = fs.readFileSync(
                     path.join(__dirname, "../../", "processedLogs", file),
                     "utf8"
                 );
-                const jsonData = JSON.parse(data).users;
-                if (jsonData[req.params.username]) {
-                    console.log(jsonData[req.params.username]);
-                    usernameCommandInfo.push(jsonData[req.params.username]);
+                const jsonData = JSON.parse(data);
+
+                // If that command wasn't used that day, skip to the next iteration
+                if (jsonData.commands[req.params.name] === undefined) {
+                    continue;
                 }
+
+                functionInfo.push(jsonData.commands[req.params.name]);
             }
-            if (usernameCommandInfo.length > 0) {
-                res.status(200).json(usernameCommandInfo);
+
+            if (functionInfo.length > 0) {
+                res.status(200).json(functionInfo);
             } else {
                 res.status(404).send("Nothing found for that one.");
             }
@@ -38,8 +40,8 @@ router.get("/user/:username", (req, res) => {
     );
 });
 
-// Gets the JSON data for a user at a date.
-router.get("/user/:username/:date", async (req, res) => {
+//Gets command data for a given date.
+router.get("/function/:name/:date", (req, res) => {
     const isValidDate = dateRegex.test(req.params.date);
     if (!isValidDate) {
         res.status(400).send("Please enter a valid date.");
@@ -69,21 +71,22 @@ router.get("/user/:username/:date", async (req, res) => {
         ),
         "utf8"
     );
-    const jsonData = JSON.parse(data).users;
-    if (jsonData[req.params.username]) {
-        res.send(jsonData[req.params.username]);
+
+    const jsonData = JSON.parse(data).commands;
+    if (jsonData[req.params.name]) {
+        res.send(jsonData[req.params.name]);
     } else {
-        res.status(404).send("Nothing found for that user.");
+        res.status(404).send("Nothing found for that function.");
     }
 });
 
-//Gets a list of all users, as well as their total command usage
+// Gets a list of all commands and their total usage.
 router.get("/list", (req, res) => {
     const data = fs.readFileSync(
         path.join(__dirname, "../../", "processedLogs", "globalData.json"),
         "utf-8"
     );
-    res.json(JSON.parse(data).users);
+    res.json(JSON.parse(data).commands);
 });
 
 module.exports = router;

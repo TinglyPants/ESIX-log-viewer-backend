@@ -4,7 +4,7 @@ const path = require("path");
 require("dotenv").config();
 const logFolderPath = process.env.LOGS_PATH;
 
-let globalDataObject = { users: {} };
+let globalDataObject = { users: {}, commands: {} };
 
 function processLogFiles() {
     let filenames = fs.readdirSync(logFolderPath);
@@ -35,10 +35,19 @@ async function processFile(filename) {
         // Adding to object
         // Commands
         if (processedObject.commands[command] === undefined) {
-            processedObject.commands[command] = 1;
-        } else {
-            processedObject.commands[command] += 1;
+            processedObject.commands[command] = {};
         }
+        if (processedObject.commands[command][username] === undefined) {
+            processedObject.commands[command][username] = 1;
+        } else {
+            processedObject.commands[command][username] += 1;
+        }
+
+        //For global data object, create command if it doesn't exist.
+        if (globalDataObject.commands[command] === undefined) {
+            globalDataObject.commands[command] = 0;
+        }
+        globalDataObject.commands[command] += 1;
 
         //Users
         // Create user if it doesn't exist
