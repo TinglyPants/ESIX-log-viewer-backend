@@ -1,9 +1,11 @@
 const express = require("express");
 const app = express();
 const historyRoutes = require("./routes/history/historyRoutes");
+const userRoutes = require("./routes/user/userRoutes");
 const processLogs = require("./processLogs");
 
 app.use("/history", historyRoutes);
+app.use("/users", userRoutes);
 
 app.get("/processAll", (req, res) => {
     processLogs();

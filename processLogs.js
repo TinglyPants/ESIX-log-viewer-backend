@@ -4,6 +4,8 @@ const path = require("path");
 require("dotenv").config();
 const logFolderPath = process.env.LOGS_PATH;
 
+let globalDataObject = { users: {} };
+
 function processLogFiles() {
     let filenames = fs.readdirSync(logFolderPath);
     for (file of filenames) {
@@ -44,6 +46,12 @@ async function processFile(filename) {
             processedObject.users[username] = {};
         }
 
+        //For global data object, create user if it doesn't exist.
+        if (globalDataObject.users[username] === undefined) {
+            globalDataObject.users[username] = 0;
+        }
+        globalDataObject.users[username] += 1;
+
         // Add command data
         if (processedObject.users[username][command] === undefined) {
             processedObject.users[username][command] = 1;
@@ -61,6 +69,17 @@ async function processFile(filename) {
             console.log("It's saved!");
         }
     );
+    let globalDataObjectString = JSON.stringify(globalDataObject);
+    fs.writeFile(
+        path.join(__dirname, "processedLogs", "globalData.json"),
+        globalDataObjectString,
+        (err) => {
+            if (err) throw err;
+            console.log("It's saved!");
+        }
+    );
 }
+
+//processLogFiles();
 
 module.exports = processLogFiles;
