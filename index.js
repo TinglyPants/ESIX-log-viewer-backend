@@ -11,6 +11,13 @@ app.use("/history", historyRoutes);
 app.use("/users", userRoutes);
 app.use("/functions", functionRoutes);
 
+const logRouteAndIP = (req, res, next) => {
+    console.log(`User with IP: ${req.ip} Accessed: ${req.url}`);
+    next();
+};
+
+app.use(logRouteAndIP);
+
 app.get("/processAll", (req, res) => {
     processLogs();
     res.send("Done.");
