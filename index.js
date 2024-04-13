@@ -7,9 +7,6 @@ const processLogs = require("./processLogs");
 const cors = require("cors");
 
 app.use(cors());
-app.use("/history", historyRoutes);
-app.use("/users", userRoutes);
-app.use("/functions", functionRoutes);
 
 const logRouteAndIP = (req, res, next) => {
     console.log(`User with IP: ${req.ip} Accessed: ${req.url}`);
@@ -17,6 +14,10 @@ const logRouteAndIP = (req, res, next) => {
 };
 
 app.use(logRouteAndIP);
+
+app.use("/history", historyRoutes);
+app.use("/users", userRoutes);
+app.use("/functions", functionRoutes);
 
 app.get("/processAll", (req, res) => {
     processLogs();
