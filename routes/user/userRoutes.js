@@ -25,7 +25,6 @@ router.get("/user/:username", (req, res) => {
                 );
                 const jsonData = JSON.parse(data).users;
                 if (jsonData[req.params.username]) {
-                    console.log(jsonData[req.params.username]);
                     usernameCommandInfo.push(jsonData[req.params.username]);
                 }
             }
