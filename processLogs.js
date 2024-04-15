@@ -4,12 +4,14 @@ const path = require("path");
 require("dotenv").config();
 const logFolderPath = process.env.LOGS_PATH;
 
+let globalDataObject = { users: {}, commands: {} };
 
 function processLogFiles() {
     let filenames = fs.readdirSync(logFolderPath);
-
-    let globalDataObject = { users: {}, commands: {} };
     
+    // reset global data
+    globalDataObject = { users: {}, commands: {} };
+
     for (file of filenames) {
         processFile(file);
     }
